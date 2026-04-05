@@ -3,64 +3,200 @@
 
 <head>
   <title>{{ race.name }} - Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f7fa;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    a {
+      color: #2a5bd7;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th {
+      background: #111;
+      color: white;
+      padding: 10px;
+      text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    tr:hover {
+      background: #f1f5ff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header-card {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      margin-bottom: 20px;
+    }
+
+    .header-card h1 {
+      margin: 0 0 10px 0;
+    }
+
+    .header-info {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .top10 {
+      background: #dbeafe !important;
+    }
+
+    .top20 {
+      background: #dcfce7 !important;
+    }
+
+    .separator-row td {
+      text-align: center;
+      font-weight: bold;
+      color: #666;
+      padding: 10px 0;
+    }
+
+    .separator-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .separator-line::before,
+    .separator-line::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #ccc;
+    }
+  </style>
+
 </head>
 
 <body>
+  <div class="container">
 
-  <h1>{{ race.name }}</h1>
+    <div class="header-card">
 
-  <p>
-    <b>Club:</b> {{ race.club }} |
-    <b>Station:</b> {{ race.station.name }} |
-    <b>Miles:</b> {{ race.station.official_miles }} |
-    <b>Year:</b> {{ race.season_year }} |
-    <b>Category:</b> {{ race.get_category_display }}
-  </p>
+      <h1>{{ race.name }}</h1>
 
-  <p><a href="{% url 'race_list' %}">⬅ Back to Race List</a></p>
+      <div class="header-info">
+        <b>Club:</b> {{ race.club }} |
+        <b>Station:</b> {{ race.station.name }} |
+        <b>Miles:</b> {{ race.station.official_miles }} |
+        <b>Year:</b> {{ race.season_year }} |
+        <b>Category:</b> {{ race.get_category_display }}
+      </div>
 
-  <hr>
+    </div>
 
-  <h2>Race Results</h2>
+    <p><a href="{% url 'race_list' %}">⬅ Back to Race List</a></p>
 
-  {% if entries %}
-  <table border="1" cellpadding="6" cellspacing="0">
-    <thead>
-      <tr>
-        <th>Pos</th>
-        <th>Name</th>
-        <th>Band ID</th>
-        <th>Color</th>
-        <th>Sex</th>
-        <th>Arrival</th>
-        <th>Miles</th>
-        <th>yd/min</th>
-        <th>To win</th>
-        <th>Points</th>
-      </tr>
-    </thead>
+    <hr>
 
-    <tbody>
-      {% for e in entries %}
-      <tr>
-        <td>{{ e.pos }}</td>
-        <td>{{ e.pigeon.member.name }}</td>
-        <td>{{ e.pigeon.band_id }}</td>
-        <td>{{ e.pigeon.color }}</td>
-        <td>{{ e.pigeon.sex }}</td>
-        <td>{{ e.arrival_time|date:"Y-m-d H:i" }}</td>
-        <td>{{ e.miles|floatformat:3 }}</td>
-        <td>{{ e.ypm }}</td>
-        <td>{{ e.to_win|floatformat:2 }}</td>
-        <td>{{ e.df_points|floatformat:2 }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p><i>No results entered yet for this race.</i></p>
-  {% endif %}
+    <h2>Race Results</h2>
 
+    {% if entries %}
+    <table border="1" cellpadding="6" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Name</th>
+          <th>Band ID</th>
+          <th>Color</th>
+          <th>Sex</th>
+          <th>Arrival</th>
+          <th>Miles</th>
+          <th>yd/min</th>
+          <th>To win</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in entries %}
+        {% if e.pos == 1 %}
+        <tr class="separator-row">
+          <td colspan="10">
+            <div class="separator-line">TOP 10%</div>
+          </td>
+        </tr>
+        {% endif %}
+
+        {% if e.pos == top10_limit|add:1 %}
+        <tr class="separator-row">
+          <td colspan="10">
+            <div class="separator-line">TOP 20%</div>
+          </td>
+        </tr>
+        {% endif %}
+        <tr class="
+        {% if e.pos <= top10_limit %}top10
+        {% elif e.pos <= top20_limit %}top20
+        {% endif %}
+        ">
+          <td>{{ e.pos }}</td>
+          <td>{{ e.pigeon.member.name }}</td>
+          <td>{{ e.pigeon.band_id }}</td>
+          <td>{{ e.pigeon.color }}</td>
+          <td>{{ e.pigeon.sex }}</td>
+          <td>{{ e.arrival_time|date:"Y-m-d H:i" }}</td>
+          <td>{{ e.miles|floatformat:3 }}</td>
+          <td>{{ e.ypm }}</td>
+          <td>{{ e.to_win|floatformat:2 }}</td>
+          <td>{{ e.df_points|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p><i>No results entered yet for this race.</i></p>
+    {% endif %}
+
+  </div>
 </body>
 
 </html>

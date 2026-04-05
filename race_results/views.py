@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Race, Club, Station
-
+from math import ceil
 
 def home(request):
     return render(request, "race_results/home.html")
@@ -63,10 +63,14 @@ def race_detail(request, pk):
 
     # 👇 aquí traemos los resultados (RaceEntry) de esa carrera
     entries = race.entries.select_related("pigeon", "pigeon__member").order_by("pos")
+    total_entries = entries.count()
+    top10_limit = max(1, int(total_entries * 0.10))
+    top20_limit = max(1, ceil(total_entries * 0.20))
 
     return render(request, "race_results/race_detail.html", {
-        "race": race,
-        "entries": entries,
-    })
-
+    "race": race,
+    "entries": entries,
+    "top10_limit": top10_limit,
+    "top20_limit": top20_limit,
+})
 
