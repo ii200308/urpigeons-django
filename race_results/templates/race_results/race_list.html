@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Race Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f3f3f3; }
+        tr:hover { background: #fafafa; }
+        a { text-decoration: none; }
+    </style>
+</head>
+
+<body>
+
+    <h1>URPA Race Results</h1>
+<form method="get" style="margin: 15px 0; display: flex; gap: 18px; flex-wrap: wrap; align-items: center;">
+
+  <!-- YEAR -->
+  <div style="display:flex; gap:8px; align-items:center;">
+    <label><b>Season Year</b></label>
+    <select name="season_year">
+      <option value="" {% if not selected.season_year %}selected{% endif %}>---</option>
+      {% for y in years %}
+        <option value="{{ y }}" {% if selected.season_year == y|stringformat:"s" %}selected{% endif %}>
+          {{ y }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- CATEGORY -->
+  <div style="display:flex; gap:8px; align-items:center;">
+    <label><b>Category</b></label>
+    <select name="category">
+      <option value="" {% if not selected.category %}selected{% endif %}>---</option>
+      {% for code, label in categories %}
+        <option value="{{ code }}" {% if selected.category == code %}selected{% endif %}>
+          {{ label }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- CLUB -->
+  <div style="display:flex; gap:8px; align-items:center;">
+    <label><b>Club</b></label>
+    <select name="club">
+      <option value="" {% if not selected.club %}selected{% endif %}>---</option>
+      {% for c in clubs %}
+        <option value="{{ c.id }}" {% if selected.club == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- STATION -->
+  <div style="display:flex; gap:8px; align-items:center;">
+    <label><b>Station</b></label>
+    <select name="station">
+      <option value="" {% if not selected.station %}selected{% endif %}>---</option>
+      {% for s in stations %}
+        <option value="{{ s.id }}" {% if selected.station == s.id|stringformat:"s" %}selected{% endif %}>
+          {{ s.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- BUTTONS -->
+  <div style="display:flex; gap:10px; align-items:center;">
+    <button type="submit">Filter</button>
+    <a href="/" style="text-decoration:none;">Reset</a>
+  </div>
+
+</form>
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>Race</th>
+                <th>Club</th>
+                <th>Station</th>
+                <th>Miles (Official)</th>
+                <th>Year</th>
+                <th>Category</th>
+                <th>Birds</th>
+                <th>Lofts</th>
+            </tr>
+        </thead>
+
+        <tbody>
+          {% for race in races %}
+            <tr>
+              <td>
+                <a href="{% url 'race_detail' race.pk %}">
+                  {{ race.name }}
+                </a>
+              </td>
+
+              <td>{{ race.club }}</td>
+              <td>{{ race.station.name }}</td>
+              <td>{{ race.station.official_miles }}</td>
+              <td>{{ race.season_year }}</td>
+              <td>{{ race.get_category_display }}</td>
+              <td>{{ race.birds_sent }}</td>
+              <td>{{ race.lofts_sent }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" style="text-align:center; padding:20px;">
+                Fill the filters above and click <b>Filter</b>.
+              </td>
+           </tr>
+          {% endfor %}
+        </tbody>
+
+    </table>
+
+</body>
+</html>
