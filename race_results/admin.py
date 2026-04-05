@@ -170,3 +170,8 @@ class RaceEntryAdminForm(forms.ModelForm):
             "%m/%d/%Y %H:%M",  # fallback 24h
             "%Y-%m-%d %H:%M",
         ]
+from django.contrib import admin
+
+admin.site.site_header = "Race Secretary"
+admin.site.site_title = "Race Secretary"
+admin.site.index_title = "Race Secretary"
