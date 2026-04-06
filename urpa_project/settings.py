@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-@jac*9z2@ofh@j+eo05u5+pa68h8x+m3+k3ogffs^jjp9%li*p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["urpigeons-django.onrender.com", "127.0.0.1", "localhost"]
-
+ALLOWED_HOSTS = ["results.urpigeons.com", "urpigeons-django.onrender.com", "127.0.0.1", "localhost"]
+CSRF_TRUSTED_ORIGINS = ["https://results.urpigeons.com"]
 
 # Application definition
 
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'race_results',
     
-
 ]
 
 MIDDLEWARE = [
